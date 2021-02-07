@@ -1,5 +1,6 @@
 mod pre_processing;
 mod calculator;
+mod tests;
 
 use pre_processing::{run, create_app};
 use std::fs::File;

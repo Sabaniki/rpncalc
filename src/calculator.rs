@@ -35,7 +35,7 @@ impl RpnCalculator {
             stack[0]
         }
         else {
-            panic!("invalid syntax")
+            panic!("invalid syntax");
         }
     }
 }
