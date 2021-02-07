@@ -1,28 +1,34 @@
-use clap::Clap;
+mod pre_processing;
+mod calculator;
 
-#[derive(Clap, Debug)]
-#[clap(
-    name = "mini RPN calc",
-    version = "1.0.0",
-    author = "sabaniki",
-    about = "This is mini RPN(Reverse Polish Notation) program"
-)]
-
-struct Opts {
-    // Sets the level of verbosity
-    #[clap(short, long)]
-    verbose: bool,
-
-    // Formulas written in PRN
-    #[clap(name = "FILE")]
-    formula_file: Option<String>,
-}
+use pre_processing::{run, create_app};
+use std::fs::File;
+use std::io::{BufReader, stdin};
+use std::process;
 
 fn main() {
-    let opts = Opts::parse();
-    match opts.formula_file {
-        Some(file) => println!("File specified: {}", file),
-        None => println!("No file specified."),
+    let matches = create_app();
+
+    if let Some(path) = matches.value_of("formula_file") {
+        let file;
+        match File::open(path) {
+            Ok(f) => file = f,
+            Err(_) => {
+                eprintln!("The specified file could not be found");
+                process::exit(1);
+            }
+        }
+
+        let reader = BufReader::new(file);
+        run(reader, matches.is_present("verbose"))
+    } else {
+        // ファイルを指定しなかった場合
+        let stdin = stdin();
+        let reader = stdin.lock();
+        run(reader, matches.is_present("verbose"));
+        println!("No file is specified");
     }
-    println!("is verbosity specified?: {}", opts.verbose);
 }
+
+
+
