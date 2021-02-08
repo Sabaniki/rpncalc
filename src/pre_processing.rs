@@ -1,15 +1,18 @@
 use std::io::BufRead;
 use clap::{ArgMatches, App, Arg};
 use crate::calculator::RpnCalculator;
+use anyhow::Result;
 
-pub fn run<R: BufRead>(reader: R, verbose: bool) {
+pub fn run<R: BufRead>(reader: R, verbose: bool) -> Result<()> {
     let calc = RpnCalculator::new(verbose);
     for line in reader.lines() {
-        let line = line.unwrap();
-        let answer = calc.eval(&line);
-        print!("{} -> ", line);
-        println!("{}", answer);
+        let line = line?;
+        match calc.eval(&line) {
+            Ok(answer) => println!("{}", answer),
+            Err(e) => eprintln!("{:#?}", e),
+        }
     }
+    Ok(())
 }
 
 pub fn create_app() -> ArgMatches {

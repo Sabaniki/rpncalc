@@ -6,8 +6,9 @@ use pre_processing::{run, create_app};
 use std::fs::File;
 use std::io::{BufReader, stdin};
 use std::process;
+use anyhow::Result;
 
-fn main() {
+fn main() -> Result<()> {
     let matches = create_app();
 
     if let Some(path) = matches.value_of("formula_file") {
